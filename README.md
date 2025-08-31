@@ -82,3 +82,35 @@ ECOMM-ASSIST/
 │── scapper_ui.py               # UI layer for scraping workflow
 
 ```
+
+## ⚙️ Tech Stack
+
+**Core Language**
+  - 🐍 Python – Main programming language
+
+**Data Ingestion & Scraping**
+  - BeautifulSoup (bs4) – HTML parsing & product data extraction
+  - undetected-chromedriver (uc) – Stealth browser automation
+  - Selenium – Web automation & interaction
+    - By, Keys, ActionChains
+
+**AI & NLP**
+  - LangChain – Document transformation, embeddings & RAG pipeline
+  - AstraDB (Vector DB) – Cloud-based vector store for semantic search
+  - Groq LLM – High-speed inference engine for LLMs
+  - Gemini LLM – Google’s large language model for conversational AI
+
+**APIs & Backend**
+  - FastAPI – Backend service framework
+  - CORS Middleware – Cross-Origin Resource Sharing support
+
+**User Interfaces**
+  - Basic HTML + CSS – Lightweight frontend template
+  - Streamlit – Interactive data exploration & assistant UI
+
+**Deployement Workflow**
+  - Docker – Containerization of services
+  - AWS ECR (Elastic Container Registry) – Store and manage Docker images
+  - AWS ECS Fargate – Serverless container orchestration (run without managing servers)
+  - GitHub Actions – CI/CD automation (build, test, deploy pipeline)
+  - pyproject.toml / requirements.txt – Dependency management
