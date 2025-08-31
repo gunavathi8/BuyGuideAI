@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BuyGuideAI - Ecomm Assist</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f5f7fa;
+            color: #222;
+        }
+        /* Navbar Styles */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(90deg, #4e4376 0%, #2b5876 100%);
+            padding: 0.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1003;
+        }
+        .navbar-left {
+            display: flex;
+            align-items: center;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropbtn {
+            background: none;
+            color: #fff;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            left: 0;
+            background: #fff;
+            min-width: 160px;
+            box-shadow: 0 8px 24px rgba(44,62,80,0.15);
+            border-radius: 8px;
+            z-index: 1004;
+        }
+        .dropdown-content a {
+            color: #2b5876;
+            padding: 0.75rem 1.2rem;
+            text-decoration: none;
+            display: block;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 1rem;
+        }
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+        .dropdown-content a:hover {
+            background: #f5f7fa;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .navbar-btn {
+            background: #fff;
+            color: #2b5876;
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 1.2rem;
+            margin-left: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+        }
+        .navbar-btn:hover {
+            background: #2b5876;
+            color: #fff;
+        }
+        /* Responsive Navbar */
+        @media (max-width: 700px) {
+            .navbar {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 0.5rem 1rem;
+            }
+            .navbar-left, .navbar-right {
+                justify-content: flex-start;
+            }
+            .dropdown-content {
+                left: 0;
+                right: auto;
+                min-width: 120px;
+            }
+        }
+        header {
+            background: none;
+            color: #2b5876;
+            padding: 2rem 0 1rem 0;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+        }
+        .hero-img {
+            width: 100%;
+            max-width: 600px;
+            display: block;
+            margin: 2rem auto 1rem auto;
+            border-radius: 18px;
+            box-shadow: 0 6px 24px rgba(44,62,80,0.15);
+        }
+        /* Chat Widget Styles */
+        .chat-widget-btn {
+            position: fixed;
+            right: 32px;
+            bottom: 32px;
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #4e4376 0%, #2b5876 100%);
+            border-radius: 50%;
+            box-shadow: 0 4px 16px rgba(44,62,80,0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1001;
+            transition: background 0.2s;
+        }
+        .chat-widget-btn:hover {
+            background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%);
+        }
+        .chat-widget-btn svg {
+            width: 32px;
+            height: 32px;
+            fill: #fff;
+        }
+        .chat-popup {
+            position: fixed;
+            right: 32px;
+            bottom: 110px;
+            width: 350px;
+            max-width: 95vw;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 32px rgba(44,62,80,0.18);
+            display: none;
+            flex-direction: column;
+            z-index: 1002;
+            animation: popupIn 0.25s;
+        }
+        @keyframes popupIn {
+            from { transform: translateY(40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .chat-popup-header {
+            background: linear-gradient(90deg, #4e4376 0%, #2b5876 100%);
+            color: #fff;
+            padding: 1rem;
+            border-radius: 16px 16px 0 0;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .chat-box {
+            min-height: 120px;
+            max-height: 250px;
+            border: none;
+            border-radius: 0;
+            padding: 1rem;
+            background: #f9f9fb;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .chat-input-area {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem;
+            border-top: 1px solid #eee;
+            background: #fafbfc;
+            border-radius: 0 0 16px 16px;
+        }
+        .chat-input-area input[type="text"] {
+            flex: 1;
+            padding: 0.5rem;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+        .chat-input-area button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            background: #2b5876;
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .chat-input-area button:hover {
+            background: #4e4376;
+        }
+        .features-section {
+            max-width: 900px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+        .features-list {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .feature-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(44,62,80,0.08);
+            padding: 1.5rem;
+            width: 220px;
+            margin: 1rem 0;
+        }
+        .feature-card img {
+            width: 48px;
+            margin-bottom: 1rem;
+        }
+        /* Enhancement: Testimonials */
+        .testimonials-section {
+            max-width: 800px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+        .testimonial-card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(44,62,80,0.08);
+            padding: 1.2rem 1.5rem;
+            margin: 1rem auto;
+            max-width: 500px;
+            font-style: italic;
+        }
+        .testimonial-author {
+            margin-top: 0.5rem;
+            font-weight: bold;
+            color: #2b5876;
+        }
+        footer {
+            background: #2b5876;
+            color: #fff;
+            padding: 1.5rem 0;
+            text-align: center;
+            margin-top: 2rem;
+        }
+        .footer-content a {
+            color: #fff;
+            margin: 0 0.5rem;
+            text-decoration: underline;
+        }
+        @media (max-width: 700px) {
+            .hero-img {
+                width: 95%;
+            }
+            .chat-popup {
+                right: 2vw;
+                width: 98vw;
+            }
+            .features-list {
+                flex-direction: column;
+                align-items: center;
+            }
+            .feature-card {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-left">
+            <div class="dropdown">
+                <button class="dropbtn">&#9776; Menu</button>
+                <div class="dropdown-content">
+                    <a href="#">Home</a>
+                    <a href="#">About</a>
+                    <a href="#">Contact Us</a>
+                    <a href="#">Solutions</a>
+                </div>
+            </div>
+        </div>
+        <div class="navbar-right">
+            <button class="navbar-btn" onclick="alert('Login functionality coming soon!')">Log In</button>
+            <button class="navbar-btn" onclick="alert('Sign Up functionality coming soon!')">Sign Up</button>
+        </div>
+    </nav>
+    <header>
+        <h1>BuyGuideAI</h1>
+        <p>Your E-commerce Assistant for Smarter Shopping</p>
+    </header>
+    <img class="hero-img" src="https://images.unsplash.com/photo-1515168833906-d2a3b82b1a48?auto=format&fit=crop&w=800&q=80" alt="E-commerce Shopping" onerror="this.style.display='none'">
+    <div class="features-section">
+        <h2>Why Choose BuyGuideAI?</h2>
+        <div class="features-list">
+            <div class="feature-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/1256/1256650.png" alt="Chat" />
+                <h3>Instant Chat Support</h3>
+                <p>Ask anything about any product, anytime.</p>
+            </div>
+            <div class="feature-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/1170/1170576.png" alt="Compare" />
+                <h3>Smart Recommendations</h3>
+                <p>Get AI-powered suggestions tailored to your needs.</p>
+            </div>
+            <div class="feature-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Save" />
+                <h3>Save Time & Money</h3>
+                <p>Compare prices and features in seconds.</p>
+            </div>
+        </div>
+    </div>
+    <!-- Enhancement: Testimonials Section -->
+    <div class="testimonials-section">
+        <h2>What Our Users Say</h2>
+        <div class="testimonial-card">
+            "BuyGuideAI helped me find the best deals in seconds. The chat support is amazing!"
+            <div class="testimonial-author">- Priya S.</div>
+        </div>
+        <div class="testimonial-card">
+            "I love the recommendations and how easy it is to compare products."
+            <div class="testimonial-author">- Rahul M.</div>
+        </div>
+    </div>
+    <!-- Chat Widget Button -->
+    <div class="chat-widget-btn" id="chatWidgetBtn" title="Chat with BuyGuideAI">
+        <svg viewBox="0 0 24 24">
+            <path d="M12 3C6.48 3 2 6.92 2 11.5c0 2.54 1.41 4.81 3.77 6.36L4 21l4.09-1.36c1.23.34 2.54.53 3.91.53 5.52 0 10-3.92 10-8.5S17.52 3 12 3zm0 15c-1.25 0-2.45-.17-3.54-.5l-.25-.08-.26.09-2.13.71.57-2.13-.17-.25C4.14 14.1 3 12.01 3 11.5 3 7.91 7.03 5 12 5s9 2.91 9 6.5-4.03 6.5-9 6.5z"/>
+        </svg>
+    </div>
+    <!-- Chat Popup -->
+    <div class="chat-popup" id="chatPopup">
+        <div class="chat-popup-header">
+            BuyGuideAI Chat
+            <span style="float:right;cursor:pointer;font-size:1.2rem;" id="closeChatPopup" title="Close">&times;</span>
+        </div>
+        <div class="chat-box" id="chatBox"></div>
+        <form class="chat-input-area" id="chatForm" autocomplete="off">
+            <input type="text" id="userInput" placeholder="Type your product query..." required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 BuyGuideAI. All rights reserved.</p>
+            <div>
+                <a href="#">About</a> | 
+                <a href="#">Contact</a> | 
+                <a href="#">Privacy Policy</a>
+            </div>
+        </div>
+    </footer>
+    <script>
+        // Chat popup logic
+        const chatWidgetBtn = document.getElementById('chatWidgetBtn');
+        const chatPopup = document.getElementById('chatPopup');
+        const closeChatPopup = document.getElementById('closeChatPopup');
+        const chatBox = document.getElementById('chatBox');
+        const chatForm = document.getElementById('chatForm');
+        const userInput = document.getElementById('userInput');
+
+        chatWidgetBtn.onclick = function() {
+            chatPopup.style.display = 'flex';
+            setTimeout(() => userInput.focus(), 200);
+        };
+        closeChatPopup.onclick = function() {
+            chatPopup.style.display = 'none';
+        };
+        // Hide popup if clicked outside
+        window.addEventListener('click', function(e) {
+            if (chatPopup.style.display === 'flex' && !chatPopup.contains(e.target) && !chatWidgetBtn.contains(e.target)) {
+                chatPopup.style.display = 'none';
+            }
+        });
+
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const userMsg = userInput.value.trim();
+            if (userMsg) {
+                appendMessage('You', userMsg);
+                setTimeout(() => {
+                    appendMessage('BuyGuideAI', "I'm here to help! (Backend integration needed)");
+                }, 700);
+                userInput.value = '';
+            }
+        });
+
+        function appendMessage(sender, message) {
+            const msgDiv = document.createElement('div');
+            msgDiv.innerHTML = `<strong>${sender}:</strong> ${message}`;
+            msgDiv.style.marginBottom = '0.5rem';
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
