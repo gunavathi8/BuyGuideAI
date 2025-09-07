@@ -114,3 +114,5 @@ ECOMM-ASSIST/
   - AWS ECS Fargate – Serverless container orchestration (run without managing servers)
   - GitHub Actions – CI/CD automation (build, test, deploy pipeline)
   - pyproject.toml / requirements.txt – Dependency management
+
+## Workflow
