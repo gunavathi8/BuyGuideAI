@@ -115,4 +115,10 @@ ECOMM-ASSIST/
   - GitHub Actions – CI/CD automation (build, test, deploy pipeline)
   - pyproject.toml / requirements.txt – Dependency management
 
-## Workflow
+## How To Run
+```
+uvicorn prod_assistant.router.main:app --reload --port 8000
+```
+
+## Basic UI (functional)
+![BuyGuideAI Chat UI](output/UI_chat.png)
