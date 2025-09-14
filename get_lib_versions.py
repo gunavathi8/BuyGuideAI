@@ -5,7 +5,8 @@ packages = [
     "python-dotenv",
     "streamlit",
     "fastapi",
-    "langgraph"
+    "langgraph",
+    "ragas"
 ]
 for pkg in packages:
     try:
