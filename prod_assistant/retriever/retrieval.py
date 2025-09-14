@@ -2,6 +2,8 @@ import os
 from langchain_astradb import AstraDBVectorStore
 from typing import List
 from langchain_core.documents import Document
+from langchain.retrievers.document_compressors import LLMChainFilter
+from langchain.retrievers import ContextualCompressionRetriever
 from utils.config_loader import load_config
 from utils.model_loader import ModelLoader
 from dotenv import load_dotenv
@@ -54,9 +56,18 @@ class Retriever:
                 )
         if not self.retriever:
             top_k = self.config["retriever"]["top_k"] if "retriever" in self.config else 3
-            retriever=self.vstore.as_retriever(search_kwargs={"k": top_k})
-            print("Retriever loaded successfully.")
-            return retriever
+            mmr_retriever=self.vstore.as_retriever(
+                search_type="mmr",
+                search_kwargs={"k": top_k, "fetch_k": 20, "lambda_mult": 0.7, "score_threshold": 0.3})
+            print("MMR Retriever loaded successfully.")
+            llm = self.model_loader.load_llm()
+            compressor = LLMChainFilter.from_llm(llm)
+
+            self.retriever = ContextualCompressionRetriever(
+                base_compressor=compressor,
+                base_retriever=mmr_retriever
+            )
+            return self.retriever
             
     def call_retriever(self,query):
         """_summary_
@@ -67,7 +78,7 @@ class Retriever:
     
 if __name__=='__main__':
     retriever_obj = Retriever()
-    user_query = "Can you suggest good budget laptops?"
+    user_query = "Can you suggest budget friendly iPhone?"
     results = retriever_obj.call_retriever(user_query)
 
     for idx, doc in enumerate(results, 1):
