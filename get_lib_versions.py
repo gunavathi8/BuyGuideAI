@@ -4,7 +4,9 @@ packages = [
     "langchain_core",
     "python-dotenv",
     "streamlit",
-    "fastapi"
+    "fastapi",
+    "langgraph",
+    "ragas"
 ]
 for pkg in packages:
     try:

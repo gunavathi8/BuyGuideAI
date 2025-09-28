@@ -356,14 +356,14 @@
             <span style="float:right;cursor:pointer;font-size:1.2rem;" id="closeChatPopup" title="Close">&times;</span>
         </div>
         <div class="chat-box" id="chatBox"></div>
-        <form class="chat-input-area" id="chatForm" autocomplete="off">
-            <input type="text" id="userInput" placeholder="Type your product query..." required>
+        <form class="chat-input-area" id="chatForm" autocomplete="off" method="post">
+            <input type="text" id="userInput" name="user_input" placeholder="Type your product query..." required>
             <button type="submit">Send</button>
         </form>
     </div>
     <footer>
         <div class="footer-content">
-            <p>&copy; 2024 BuyGuideAI. All rights reserved.</p>
+            <p>&copy; 2025 BuyGuideAI. All rights reserved.</p>
             <div>
                 <a href="#">About</a> | 
                 <a href="#">Contact</a> | 
@@ -394,15 +394,28 @@
             }
         });
 
+        // Backend connection for chat (AJAX, similar to chat.html)
         chatForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const userMsg = userInput.value.trim();
             if (userMsg) {
-                appendMessage('You', userMsg);
-                setTimeout(() => {
-                    appendMessage('BuyGuideAI', "I'm here to help! (Backend integration needed)");
-                }, 700);
+                appendMessage('👤', userMsg);
                 userInput.value = '';
+                fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ user_input: userMsg })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    appendMessage('🛍️', data.response || "Sorry, I couldn't process your request.");
+                })
+                .catch(() => {
+                    appendMessage('BuyGuideAI', "Sorry, there was a problem connecting to the server.");
+                });
             }
         });
 
